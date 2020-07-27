@@ -1,0 +1,83 @@
+micronaut:
+
+  application:
+    name: swagger-server
+    instance: ${random.uuid}
+    version: 0.1
+
+  router:
+    static-resources:
+      swagger:
+        paths: classpath:META-INF/swagger
+        mapping: /swagger/**
+      swagger-ui:
+        paths: classpath:META-INF/swagger/views/swagger-ui
+        mapping: /swagger-ui/**
+
+  metrics:
+    enabled: true
+    export:
+      prometheus:
+        enabled: true
+
+  security:
+    intercept-url-map:
+      - pattern: /swagger-ui/**
+        http-method: GET
+        access:
+          - isAnonymous()
+      - pattern: /swagger/**
+        http-method: GET
+        access:
+          - isAnonymous()
+    authentication: bearer
+    token:
+      jwt:
+        signatures:
+          secret:
+            generator:
+              base64: true
+              secret: pleaseChangeThisSecretForANewOnepleaseChangeThisSecretForANewOnepleaseChangeThisSecretForANewOnepleaseChangeThisSecretForANewOne
+              jws-algorithm: HS256
+
+endpoints:
+  health:
+    enabled: true
+    endpoints:
+      login:
+        enabled: true
+    sensitive: false
+    details-visible: ANONYMOUS
+    url:
+      enabled: true
+
+datasources:
+  default:
+    name: 'default'
+    url: jdbc:h2:mem:micronautSecurityDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+    driverClassName: org.h2.Driver
+    username: sa
+    password: ''
+    dialect: H2
+    schema-generate: CREATE_DROP
+
+jpa:
+  default:
+    packages-to-scan:
+      - org.bitbucket.nullptr7.models
+    properties:
+      hibernate:
+        hbm2ddl:
+          auto: create-drop
+
+credentials:
+  users:
+    smith: smith123
+    scott: scott123
+    piomin: piomin123
+    test: test123
+  roles:
+    smith: ADMIN
+    scott: VIEW
+    piomin: VIEW
+    test: ADMIN
