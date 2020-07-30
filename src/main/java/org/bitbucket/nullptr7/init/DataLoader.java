@@ -28,6 +28,13 @@ public class DataLoader implements ApplicationEventListener<ServiceReadyEvent> {
 
         LOGGER.info("Application started.");
         LOGGER.info("Data entry in progress...");
+
+        if (EMP_DAO.findAll()
+                   .iterator()
+                   .hasNext()) {
+            LOGGER.info("Elements are available. Existing...");
+            return;
+        }
         Employee e1 = Employee.builder()
                               .name("Employee1")
                               .salary(100.00)
